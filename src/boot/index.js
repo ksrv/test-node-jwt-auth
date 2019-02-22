@@ -1,9 +1,9 @@
 import server from './server';
-import redis from './redis';
+import mysql from './mysql';
 import jwt from './jwt';
 
 export default app => {
   server(app);
-  redis(app);
+  mysql(app);
   jwt(app);
 }

@@ -49,9 +49,11 @@ router.post('/login', async (req, res, next) => {
 
     // Тянем юзера
     const user = await findByEmail(email);
+    // console.log({ user });
 
     // Проверяем пароль
     const isValidPassword = checkPassword(user, password) ;
+    // console.log({ isValidPassword });
 
     if (!isValidPassword) {
       throw new HttpError(400, 'User email or password is invalid');
@@ -59,9 +61,11 @@ router.post('/login', async (req, res, next) => {
 
     // Очищаем данные
     delete user.password_hash;
+    // console.log({ user });
 
     // Создаем токен
     const token = createJwt(user);
+    // console.log({ token });
 
     res.status(200).json({ token });
   } catch (error) {
