@@ -1,11 +1,15 @@
 import express from 'express';
+import uuid from 'uuid/v4';
+import bcrypt from 'bcrypt';
 import HttpError from '../http-error';
 
 
 const router = express.Router();
 
 
-// Регистрация
+/**
+ * Регистрация юзера
+ */
 router.post('/register', async (req, res, next) => {
   const { userExists, register } = res.locals.db;
   const { createJwt } = res.locals.jwt;
@@ -18,8 +22,15 @@ router.post('/register', async (req, res, next) => {
     // Если юзер с таким мылом регался - ошибка
     if (isUserExists) throw new HttpError(400, 'User registered');
 
+    const id = uuid();
+    const salt = bcrypt.genSaltSync(4);
+    const password_hash = bcrypt.hashSync(password, salt);
+    
     // Регистрируем юзера
-    const user = await register({ username, email, password });
+    const user = await register({ id, username, email, password_hash });
+
+    // Очищаем данные
+    delete user.password_hash;
 
     // Создаем токен
     const token = createJwt(user);
@@ -32,7 +43,9 @@ router.post('/register', async (req, res, next) => {
 })
 
 
-// Авторизация по мылу и паролю
+/**
+ * Авторизация юзера по мылу и паролю
+ */
 router.post('/login', async (req, res, next) => {
   const { userExists, findByEmail } = res.locals.db;
   const { createJwt, checkPassword } = res.locals.jwt;
@@ -75,7 +88,7 @@ router.post('/login', async (req, res, next) => {
 
 
 /**
- * Проверка валидности токена
+ * Проверка валидности токена юзера
  * И обновление в токена
  */ 
 router.put('/login', async (req, res, next) => {

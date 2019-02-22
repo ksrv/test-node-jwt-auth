@@ -9,7 +9,9 @@ router.use('/', auth)
 
 
 router.use((error, req, res, next) => {
-  console.log('register error', error)
+  if (res.locals.isDevelopment) {
+    console.log('register error', error)
+  }
   let code, message;
   if (error.name == 'JsonWebTokenError') {
     code = 400;

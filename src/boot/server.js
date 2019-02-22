@@ -2,11 +2,22 @@ import bodyParser from 'body-parser'
 import morgan from 'morgan'
 import cors from 'cors'
 
+const isDevelopment = process.env.NODE_ENV === 'development';
+const isProduction = !isDevelopment;
+
+
 export default app => {
+
+  app.use((req, res, next) => {
+    res.locals.isDevelopment = isDevelopment;
+    res.locals.isProduction = isProduction;
+    next();
+  });
+
   // Логи
-  // if (process.env.NODE_ENV === 'development') {
-  //   app.use(morgan('combined'));
-  // }
+  if (isDevelopment) {
+    app.use(morgan('combined'));
+  }
 
   // CORS
   app.use(cors({

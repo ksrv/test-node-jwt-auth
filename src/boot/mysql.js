@@ -1,6 +1,4 @@
 import mysql from 'mysql';
-import uuid from 'uuid/v4';
-import bcrypt from 'bcrypt';
 
 const options = {
   user: 'konstantin',
@@ -39,16 +37,11 @@ function userExists (mysql) {
  * Регистрация пользователя
  */
 function register (mysql) {
-  return function ({ username, email, password }) {
+  return function (user) {
     return new Promise((resolve, reject) => {
-      const id = uuid();
-      const salt = bcrypt.genSaltSync(4);
-      const password_hash = bcrypt.hashSync(password, salt);
-      const user = { id, username, email, password_hash };
-
       mysql.query('INSERT INTO users SET ?', user, (error, results, fields) => {
         if (error) return reject(error);
-        resolve({ id, username, email });
+        resolve(user);
       });
     });
   }

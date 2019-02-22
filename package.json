@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "dev": "NODE_ENV=development NEO4J_PASS=123 nodemon --exec babel-node -w src/ src/index.js",
-    "load": "nodemon --exec babel-node test.js",
     "test": "mocha --require @babel/register"
   },
   "keywords": [],
